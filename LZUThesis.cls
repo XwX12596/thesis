@@ -148,8 +148,8 @@
 %字体宏包
 %=======package
 \RequirePackage{amsmath}
-% \RequirePackage{amsfonts}
-% \RequirePackage{amssymb}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
 \RequirePackage{mathrsfs}
 
 
@@ -539,7 +539,7 @@
 \thispagestyle{frontmatterstyle}
 \begin{center}%
     \setlength{\parskip}{24pt}
-    \begin{minipage}{0.8\textwidth}
+    \begin{minipage}{0.9\textwidth}
         \linespread{1.3889}
         \centering
         % 中文摘要标题，应该是加粗（宋体加粗）
