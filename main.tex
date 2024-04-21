@@ -170,7 +170,7 @@ Koopman算子理论中指出，Koopman算子$\mathcal{K}$和Koopman生成器$\ma
 \begin{subequations}
   \begin{align}
     \mathcal{K}g &= g \circ F \\
-    \mathcal{L}g &= f \cdot \triangledown g
+    \mathcal{L}g &= f \cdot \nabla g
   \end{align}
 \end{subequations}
 Koopman生成器$\mathcal{L}$和Koopman算子有如下的关系
@@ -285,12 +285,12 @@ $$
 很明显，我们只需要使用梯度上升的方式迭代策略网络。
 参数更新如下：
 \begin{equation}
-  \theta_{new} = \theta_{old} + \beta \cdot \triangledown_\theta J(\theta_{now})
+  \theta_{new} = \theta_{old} + \beta \cdot \nabla_\theta J(\theta_{now})
 \end{equation}
 其中，$\beta$代表学习率，是需要调整的超参数，
 梯度的具体表达式如下：
 \begin{equation}
-  \triangledown_\theta J(\theta_{now}) \triangleq \frac{\partial J(\theta)}{\partial \theta}
+  \nabla_\theta J(\theta_{now}) \triangleq \frac{\partial J(\theta)}{\partial \theta}
 \end{equation}
 以上算法被称为策略梯度
 
@@ -316,6 +316,106 @@ $$
 策略网络可以获得更好的状态价值，价值网络可以实现更好的价值估计。
 最后取用策略网络作为最优控制的策略函数就可以完成Actor-Critic算法在最优控制问题上的应用。
 
+\section{神经网络简述}
+本文中将使用简单的神经网络对于函数进行近似，在本节中将对于神经网络进行一些简单的介绍。
+\subsection{简单架构}
+神经网络架构的灵感来自与人脑中的神经元，它们构成了一个复杂的互相连接的神经元网络，
+通过互相发送电信号来交换和处理信息。同样的，人工神经网络由人工神经元构成，
+以相似的结构结合在一起，共同合作以解决问题。
+
+实际上，人工神经元是以层为单位结合在一起的，基本神经网络主要分为三层：
+
+输入层：来自神经网络外部的信息会通过输入层进入人工神经网络。
+输入节点对数据进行处理、分析或者分类，然后继续传递到下一层。
+
+隐藏层：隐藏层从输入层或者其他隐藏层获取其输入。人工神经网络可以具有大量的隐藏层，
+每个隐藏层都会对来自上一层的输出进行分析和进一步处理，然后将其继续传递到下一层。
+
+输出层：输出层提供人工神经网络对所有数据进行处理的最终结果。
+它可以包含单个或多个节点。
+例如，如果我们要解决一个二元（是/否）分类问题，则输出层包含一个输出节点，它将提供 1 或 0 的结果。
+但是，如果我们要解决一个多类分类问题，则输出层可能会由一个以上输出节点组成。
+
+下面介绍全连接层：
+令输入向量$x \in \mathbb{R}^d$，神经网络的一个层把$x$映射为$x' \in \mathbb{R}^{d'}$。全连接层定义如下：
+\begin{equation}
+  x' = \sigma(z), \qquad z = W x + b
+\end{equation}
+其中，权重矩阵 $W \in \mathbb{R}^{d' \times d}$和
+偏置向量$b \in \mathbb{R}^{d'}$是该层的参数，需要从数据中学习；
+$\sigma(\cdot)$是激活函数，比如softmax函数、sigmoid函数，ReLU（Rectified Linear Unit）函数。
+最常用的激活函数是ReLU。定义如下：
+\begin{equation}
+  \mathrm{ReLU}(z) = [(z_1)_+, (z_2)_+, \cdots, (z_{d'})_+,]^T
+\end{equation}
+上面的$[z_i]_+ = \max(z_i, 0)$。我们称上面的结构为全连接层（Fully Connected Layer）。
+如果把全连接层当作基本部件，然后像搭积木一样搭建一个全连接神经网络，
+也叫多层感知机（Multi-Layer Perceptron, MLP）
+
+\subsection{反向传播}
+线性模型和神经网络的训练都可以描述成一个优化问题，
+设全连接层的权重参数为$\omega^{(1)}, \cdots, \omega^{(l)}$
+我们希望求解下面这样的一个优化问题：
+\begin{equation}
+  \min_{\omega^{(1)}, \cdots, \omega^{(l)}} L(\omega^{(1)}, \cdots, \omega^{(l)})
+\end{equation}
+其中$L$表示损失函数。
+对于这样一个无约束的最小化问题，最常使用的方法是梯度下降（Gradent Descent, GD）和随机梯度下降（Stochastic Gradient Descent, SGD），本节主要介绍使用SGD求解最小化问题。
+
+假设目标函数可以写成$n$连加的形式：
+\begin{equation}
+  L(\omega^{(1)}, \cdots, \omega^{(l)}) = \frac1n \sum_{j = 1}^{n}
+  F_j (\omega^{(1)}, \cdots, \omega^{(l)})
+\end{equation}
+函数$F_j$隐含第$j$个训练样本$(x_j, y_j)$。
+每次从集合$\{ 1,2,\cdots,n \}$中随机抽取一个数，记作$j$。
+当前的参数只为$\omega_{now}^{(1)}, \cdots, \omega_{now}^{(j)}$，
+计算此处的梯度，SGD算法的迭代过程为
+\begin{equation}
+  \omega_{new}^{(i)} \leftarrow \omega_{now}^{(i)} - 
+  \alpha \cdot \underbrace{
+  \nabla{\omega^{(i)}} F_j \left( \omega_{now}^{(1)}, 
+\cdots, \omega_{now}^{(l)} \right)}_\text{随机梯度},
+  \quad \forall i = 1, \cdots, l.
+\end{equation}
+
+下面我们介绍反向传播（Backpropagation，BP），以全连接神经网络为例，简单介绍反向传播的原理。
+全连接神经网络（忽略偏移量$b$）定义如下：
+\begin{align*}
+  x^{(1)} &= \sigma_1 (W^{(1)} x^{(0)}), \\
+  x^{(2)} &= \sigma_2 (W^{(2)} x^{(1)}), \\
+       &\vdots                           \\
+  x^{(l)} &= \sigma_l (W^{(l)} x^{(l - 1)}),
+\end{align*}
+神经网络的输出$x^{(l)}$是神经网络做出的预测。设向量$y$为真实标签，函数$H$为交叉熵，实数$z$为损失函数：
+\begin{equation}
+  z = H(y, x^{(l)})
+\end{equation}
+要做梯度下降更新参数$W^{(1)}, \cdots, W^{(l)}$，我们需要计算损失函数$z$关于每一个变量的梯度：
+\begin{equation}
+  \frac{\partial z}{\partial W^{(1)}}, \frac{\partial z}{\partial W^{(2)}}, 
+  \cdots, \frac{\partial z}{\partial W^{(l)}}
+\end{equation}
+
+现在可以用链式法则做反向传播，计算损失函数$z$关于神经网络参数的梯度。
+具体地，首先求出梯度$\frac{\partial z}{\partial x^{(l)}}$。
+然后做循环，从$i = l, \cdots, 1$，依次执行如下操作：
+根据链式法则可得损失函数$z$关于参数$W^{(i)}$的梯度：
+\begin{equation}
+  \frac{\partial z}{\partial W^{(i)}} = \frac{\partial x^{(i)}}{\partial W^{(i)}} 
+  \cdot \frac{\partial z}{\partial x^{(i)}}
+\end{equation}
+此梯度用于更新参数$W^{(i)}$。
+根据链式法则可得损失函数$z$关于参数$x^{(i - 1)}$的梯度:
+\begin{equation}
+  \frac{\partial z}{\partial x^{(i - 1)}} = \frac{\partial x^{(i)}}{\partial x^{(i - 1)}} 
+  \cdot \frac{\partial z}{\partial x^{(i)}}
+\end{equation}
+这个梯度被传播到下面一层（即第$i - 1$层）,继续循环。
+
+综上所述，只要知道损失函数$z$关于$x^{(i)}$的梯度，就能求出$z$关于$W^{(i)}$和$x^{(i - 1)}$的梯度。
+
+
 
 
 \chapter{Koopman算子辅助的最大熵强化学习}
@@ -330,7 +430,7 @@ $$
 特别是，Koopman算子能够通过提升坐标中的线性动力学来捕获给定系统的价值函数的时间演化的期望。
 
 
-\section{动作加权的Koopman张量}
+\section{动作加权的Koopman算子}
 我们现在关注如何通过Koopman算子在时间上推进观测基底函数，已知当前状态和动作，
 也就是说，找到下面的一个映射：
 \begin{equation}
@@ -375,10 +475,26 @@ $$
 从而，优化问题变成了常规的线性规划问题：
 \begin{equation}
   \min_{M} \sum_{i = 1}^{N} || M(\phi(u) \circledtimes \phi(x_i)) - \phi(\dot x_i) ||^2
+  \label{solve_M}
 \end{equation}
+算法见算法 \ref{KoopmanT} 。
+
 只要我们计算出了$M$，我们就可以通过将$M$转换回为三维张量$\mathcal{T}_K$的方式
 为任意系统执行的$u \in \mathcal{U}$得到标准的Koopman算子，
 同时也得到了上述对$\mathcal{K}^u$的有限维近似$K^u \in \mathbb{R}^{d_x \times d_x}$
+
+\begin{algorithm}[H]
+  \caption{Koopman张量估计}
+  \label{KoopmanT}
+  \begin{algorithmic}[1]
+    \Require 状态特征映射 $\phi : \chi \mapsto \mathbb{R}^{d_x}$，
+    控制特征映射$\psi : \mathcal{U} \mapsto \mathbb{R}^{d_u}$
+    以及一个样本集合：$\{(x_i, u_i)\}_{i = 0}^{N}$
+    \State 从等式(\ref{solve_M})中解出$\hat{M}$
+    \State 以Fortran风格将$M$转换成$\mathcal{T}_K$
+  \end{algorithmic}
+\end{algorithm}
+
 
 \section{最大熵强化学习最优控制问题}
 考虑强化学习在最优控制领域的应用，在实践中最大的问题有以下两点：
@@ -437,7 +553,7 @@ $Q^\pi$更改为包括除了第一个时间步以外的每个时间步的熵奖�
 \end{equation}
 权重参数$\alpha$决定了熵项对于奖励的相对重要性，从而控制了最优策略迭代中的的随机性。
 
-\subsection{Soft Actor-Critic强化学习算法}
+\subsection{Soft Actor-Critic强化学习最优控制算法}
 下面，介绍如何通过策略迭代公式设计SAC算法，
 我们将从推导熵策略迭代（Soft Policy Iteration）开始，
 这是一种在应用了熵正则的方法下学习最优策略的通用算法，
@@ -486,7 +602,7 @@ $\mathcal{Q} : \mathcal{S} \times \mathcal{A} \mapsto \mathbb{R}$
 其中，$D$是先前采样状态和动作的概率分布，或者是经验回放。
 等式(\ref{v_J})的梯度可以用下面的无偏估计表示：
 \begin{equation}
-  \hat{\triangledown} J_V(\psi) = \triangledown_\phi V_\phi(s_t) 
+  \hat{\nabla} J_V(\psi) = \nabla_\phi V_\phi(s_t) 
   (V_\phi(s_t) - Q_\theta(s_t, a_t) + \log \pi_{\phi} (a_t | s_t))
 \end{equation}
 其中，动作是根据当前策略采样的，而不是从经验回放中抽取。
@@ -502,10 +618,10 @@ $\mathcal{Q} : \mathcal{S} \times \mathcal{A} \mapsto \mathbb{R}$
 \end{equation}
 同样可以用随机梯度下降优化：
 \begin{equation}
-  \hat{\triangledown}_\theta J_Q(\theta) = \triangledown_\theta Q_\theta(a_t, s_t)
+  \hat{\nabla}_\theta J_Q(\theta) = \nabla_\theta Q_\theta(a_t, s_t)
   (Q_\theta(s_t, a_t) - r(s_t, a_t) - \gamma V_{\overline{\phi}}(s_{t + 1}))
 \end{equation}
-更新利用了目标值网络$V_{\overline{\psi}}$，其中$\overline_{\psi}$
+更新利用了目标值网络$V_{\overline{\psi}}$，其中$\overline{\psi}$
 在更新参数时加权更新，
 这种方式已被证明可以稳定训练[cite]。
 最后，可以通过直接最小化等式(\ref{pi_upd})
@@ -529,10 +645,10 @@ $\mathcal{Q} : \mathcal{S} \times \mathcal{A} \mapsto \mathbb{R}$
 \end{equation}
 我们可以近似等式(\ref{phi_J})的梯度：
 \begin{equation}
-  \hat{\triangledown}_\phi J_\pi(\phi) = \triangledown_\phi \log\pi_\phi(\mathbf{a}_t | \mathbf{s}_t)
-  + (\triangledown_{\mathbf{a}_t} \log \pi_\phi(\mathbf{a}_t | \mathbf{s}_t) - 
-  \triangledown_{\mathbf{a_t}}Q(\mathbf{s}_t, \mathbf{a}_t)) 
-  \triangledown_\phi f_\phi(\epsilon_t;\mathbf{s}_t)
+  \hat{\nabla}_\phi J_\pi(\phi) = \nabla_\phi \log\pi_\phi(\mathbf{a}_t | \mathbf{s}_t)
+  + (\nabla_{\mathbf{a}_t} \log \pi_\phi(\mathbf{a}_t | \mathbf{s}_t) - 
+  \nabla_{\mathbf{a_t}}Q(\mathbf{s}_t, \mathbf{a}_t)) 
+  \nabla_\phi f_\phi(\epsilon_t;\mathbf{s}_t)
 \end{equation}
 其中，$a_t$由$f_\phi(\epsilon_t;\mathbf{s}_t)$评估。
 % 这个无偏梯度估计器将DDPG风格的策略梯度
@@ -552,23 +668,54 @@ $\mathcal{Q} : \mathcal{S} \times \mathcal{A} \mapsto \mathbb{R}$
 	\State $D \leftarrow D \cup { (\mathbf{s}_t, \mathbf{a}_t, r(\mathbf{s}_t, \mathbf{a}_t), \mathbf{s}_{t + 1}) }$
       \EndFor
       \For {每一次梯度}
-	\State $\psi \leftarrow \psi - \lambda_V \hat{\triangledown}_\phi J_V(\psi)$
-	\State $\theta_i \leftarrow \theta_i - \lambda_Q \hat{\triangledown}_{\theta_i} J_\pi(\phi)$ for $i \in {1, 2}$
-	\State $\phi \leftarrow \phi - \lambda_\pi \hat{\triangledown}_\phi J_\pi(\phi)$
+	\State $\psi \leftarrow \psi - \lambda_V \hat{\nabla}_\phi J_V(\psi)$
+	\State $\theta_i \leftarrow \theta_i - \lambda_Q \hat{\nabla}_{\theta_i} J_\pi(\phi)$ for $i \in {1, 2}$
+	\State $\phi \leftarrow \phi - \lambda_\pi \hat{\nabla}_\phi J_\pi(\phi)$
 	\State $\overline{\psi} \leftarrow \tau \psi + (1 - \tau) \overline{\psi}$
       \EndFor
     \EndFor
   \end{algorithmic}
 \end{algorithm}
 
-\section{实验结果}
+在这里，我们概述了如何通过修改Soft Actor-Critic框架[cite]，
+以合并来自Koopman算子的信息来限制探索空间的。
 
-% \section{本章小结}
-% 本章主要介绍一种用于非线性系统最优控制系统的，基于Koopman算子辅助强化学习训练的算法。
-% 该算法的研究对象主要是第二章中提及的受控非线性系统，训练算法为最大熵强化学习。
-% 同时，通过Koopman算子理论，将最大熵强化学习中的价值函数通过贝尔曼方程代换的方式，
-% 得到其有关时间序列的期望，旨在提高算法对于非线性系统的适应性，
-% 同时保留了Koopman算子对于非线性系统动态的觉察，保留了输入输出的可解释性。
+这里使用与Soft Actor-Critic论文[53]相同的损失函数和类似的符号，
+我们首先指定熵价值函数损失：
+\begin{equation}
+  J_{V}(\psi) = \mathop{\mathbb{E}}_{s_t \sim D}
+  \left[ \frac12 ( V_{\psi}(s_t) - \mathbb{E}_{a_t \sim \pi_{\phi}}
+  \left[ Q_\theta(s_t, a_t) - \log \pi_{\phi}(a_t, | s_t) \right] )^2 \right]
+  % \label{v_J_K}
+\end{equation}
+
+在这里，介绍有关Koopman熵价值函数的新定义：
+\begin{equation}
+  V_\psi(x) = \psi^T \phi(x)
+\end{equation}
+其中，$\omega$是字典函数的系数向量，表示价值函数在是字典函数也就是观测函数的线性组合。
+也就是说，价值函数的评估是集中在Koopman升维后的观测空间中进行的。
+同时，我们知道，合理的观测空间应该是由一组完备的观测函数所构建的，
+所以在价值评估的准确性上是有理论支撑的。
+
+下面，介绍如何改动动作价值函数的目标函数：
+\begin{equation}
+  J_Q(\theta) = \mathbb{E}_{(x, u) \sim D} \left[ \frac12 \left( 
+  Q_\theta(x, u) - \hat{Q}(x, u) \right)^2 \right]
+\end{equation}
+
+
+
+
+
+% \section{实验结果}
+
+\section{本章小结}
+本章主要介绍一种用于非线性系统最优控制系统的，基于Koopman算子辅助强化学习训练的算法。
+该算法的研究对象主要是第二章中提及的受控非线性系统，训练算法为最大熵强化学习。
+同时，通过Koopman算子理论，将最大熵强化学习中的价值函数通过贝尔曼方程代换的方式，
+得到其有关时间序列的期望，旨在提高算法对于非线性系统的适应性，
+同时保留了Koopman算子对于非线性系统动态的觉察，保留了输入输出的可解释性。
 
 
 
