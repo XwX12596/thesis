@@ -418,7 +418,7 @@ $\sigma(\cdot)$是激活函数，比如softmax函数、sigmoid函数，ReLU（Re
 \begin{align*}
   x^{(1)} &= \sigma_1 (W^{(1)} x^{(0)}), \\
   x^{(2)} &= \sigma_2 (W^{(2)} x^{(1)}), \\
-       &\vdots                           \\
+  &\vdots                                \\
   x^{(l)} &= \sigma_l (W^{(l)} x^{(l - 1)}),
 \end{align*}
 神经网络的输出$x^{(l)}$是神经网络做出的预测。设向量$y$为真实标签，函数$H$为交叉熵，实数$z$为损失函数：
@@ -576,8 +576,8 @@ $Q^\pi$更改为包括除了第一个时间步以外的每个时间步的熵奖�
     V^\pi(s) &= \mathop{\mathbb{E}}_{\dot s \sim P, \dot a \sim \pi}
     \left[ r(s, a, \dot s) + \gamma(Q^\pi(\dot s, \dot a) + 
     \alpha H(\pi(\cdot | \dot s))) \right] \\
-	     &= \mathop{\mathbb{E}}_{\dot s \sim P}
-	     \left[ r(s, a, \dot s) + \gamma V^\pi(\dot s) \right]
+    &= \mathop{\mathbb{E}}_{\dot s \sim P}
+    \left[ r(s, a, \dot s) + \gamma V^\pi(\dot s) \right]
   \end{aligned}
 \end{equation}
 
@@ -884,6 +884,13 @@ $g_u(x_k, u_k)=g_{\phi}(x_k, u_k)$，
 其中，对于DKUC算法，$g_\phi(x, u)=u$，
 对于DKAC算法，$g_\phi(x, u)=g_\phi(x)u$，
 对于DKN算法，$g_\phi(x, u)= g_\phi(x, u)$。
+网络示意如图 (\ref{control_net})
+\begin{figure}
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/control_net.pdf}
+  \caption{不同形式的控制网络示意图}
+  \label{control_net}
+\end{figure}
 
 Koopman的标准算法应首先选择嵌入函数，然后使用线性回归学习Koopman算子矩阵，这种方法仅用于单步预测。
 在这项工作中，我们端到端地学习嵌入函数和Koopman算子，并设计了用于长期预测的K步预测损失函数。
@@ -905,7 +912,6 @@ K步损失不是只考虑下面的一步预测误差，而是关注K步预测误
 我们介绍如何将深度Koopman算子和最大熵强化学习结合，
 以求使得我们的最优控制算法得到更好的收敛速度和训练效果。
 
-\subsection{深度Koopman Critic网络}
 在第三章中，介绍了动作加权的Koopman算子，其目的是为了更好的获取
 系统动作的信息，不同的动作量信息，在做单步预测时，
 应当在Koopman算子中体现出来，以求达到更好的预测能力。
@@ -919,23 +925,13 @@ K步损失不是只考虑下面的一步预测误差，而是关注K步预测误
 
 下面介绍深度Koopman Critic网络来解决上面的问题：
 
-我们假设有嵌入网络$g_\theta : d_x \mapsto d_z$，辅助控制网络$g_\phi$，Koopman算子矩阵$A, B$和恢复矩阵$C$。
+我们假设有嵌入网络$g_\theta : d_x \mapsto d_z$，控制辅助网络$g_\phi$，Koopman算子矩阵$A, B$和恢复矩阵$C$。
 下面介绍网络架构和前馈过程：
 
 有系统状态和输入：$(x_t, u_t)$，嵌入网络将系统状态提升到嵌入空间：
 \begin{equation}
   z_t = [\; x_t^T \quad g_\theta(x_t)^T \;]^T
 \end{equation}
-% 在上面的等式中，将原始系统状态和提升后的状态和原始状态拼接在一起，
-% 这样做的原因除了在升维空间中能够强调系统原始状态，
-% 还能够通过恢复矩阵还原系统原始状态：
-% \begin{equation}
-%   x_t = C z_t
-% \end{equation}
-% 其中：
-% \begin{equation}
-%   C = [\; I_{d_x} \quad 0 \;]
-% \end{equation}
 
 同样的，辅助控制网络将系统控制提升到嵌入空间：
 \begin{equation}
@@ -951,7 +947,13 @@ K步损失不是只考虑下面的一步预测误差，而是关注K步预测误
   z_{t + 1} = A z_t + B \hat{u}_t
 \end{equation}
 可以看出，在这里我们使用了两个Koopman矩阵，并且取两个矩阵的和作为新的升维状态，
-同时考虑了状态信息和动作信息。
+同时考虑了状态信息和动作信息。具体网络架构如图(\ref{DKN_critic})所示。
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/dkn-rotate.pdf}
+  \caption{基于非线性形式辅助网络的深度Koopman价值网络}
+  \label{DKN_critic}
+\end{figure}
 
 在此基础上，我们考虑如等式中的 (\ref{Koopman-critic}) Koopman-Critic函数，
 将Koopman算子和嵌入函数结合的函数$K^u \phi(\cdot)$通过上述的神经网络结合，
@@ -961,7 +963,9 @@ K步损失不是只考虑下面的一步预测误差，而是关注K步预测误
   + \gamma \overline{\omega}^T ( A z_t + B \hat{u}_t )
 \end{equation}
 
-在上面的修改下，我们依然可以遵从算法 $\ref{sac}$ 对参数网络进行迭代。
+在上面的修改下，我们依然可以遵从算法 
+$\ref{sac}$ 对参数网络进行迭代。
+
 
 
 
