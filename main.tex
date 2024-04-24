@@ -186,9 +186,10 @@ Koopman算子将测量函数$g$沿着路径$x$向前演化如下：
 \begin{equation}
   \mathcal{K}_\tau g(x_t) := g(F_\tau(x_t)) = g(x_{t + \tau})
 \end{equation}
-其中$F$代表着系统的演化规律，或者更一般的,在随机自治系统中，$F$被如下定义为条件预测算子：
+其中$F$代表着系统的演化规律。更一般的,在随机自治系统中，$\mathcal{K}$被如下定义为条件预测算子：
 \begin{equation}
   \mathcal{K} g(x_t) = \mathbb{E}\left[g(X_{t + \tau}) | X_t = x_t\right]
+  \label{Linear_Predictor_K}
 \end{equation}
 在上述离散系统算子中，普遍使用$\mathcal{K} := \mathcal{K}_1$，在本文中也照此用法。
 
@@ -219,8 +220,18 @@ Koopman算子的本征函数就可以作为一组特殊的观测函数[cite]：
 \end{equation}
 在受控连续时间系统中：
 \begin{equation}
-  \frac{\mathrm{d}}{\mathrm{d}t} = f(x(t), u(t))
+  \frac{\mathrm{d}}{\mathrm{d}t} x = f(x(t), u(t))
 \end{equation}
+
+如果考虑到$u_{k + 1} = u_k$的控制输入，
+我们可以将等式 (\ref{Linear_Predictor_K}) 修改为：
+\begin{equation}
+  g(x_{k + 1}, u_{k + 1}) = \mathcal{K} g(x_k, u_k)
+  \label{Linear_Predictor_with_Control}
+\end{equation}
+其中$x \in \mathbb{R}^n, u \in \mathbb{R}^m$，
+且$g : \mathbb{R}^{n + m} \mapsto \mathbb{R}^d$。
+
 
 \subsection{数据驱动的Koopman算子}
 
@@ -797,15 +808,107 @@ Actor据此计算要在环境中执行的动作。整体的框架如图 \ref{fig
 使得训练流程更加简化，对于样本的利用更加有效。
 
 \section{深度Koopman算子网络}
+我们首先将嵌入函数分为两部分：
+在不失一般性的情况下，我们假设第一项仅与系统状态相关，
+$\left.g(x, u)=\left[g_{x}(x, u) ; g_{u}(x, u)\right)\right]$
+所以我们得到$g_x(x, u) = g_x(x)$。
+基于Koopman算子的定义，将Koopman算子$\mathcal{K}$拆分成两个矩阵，
+则可以得出：
+\begin{equation}
+  g_{x}\left(x_{k+1}\right)=K_{x x} g_{x}\left(x_{k}\right)+
+  K_{x u} g_{u}\left(x_{k}, u_{k}\right)
+\end{equation}
 
+对于嵌入函数的第一部分，我们使用神经网络$\theta$来参数化$g_x(x, k)$，
+将原始状态和网络编码连接起来在一起:
+\begin{equation}
+  z_{k}=g_{x}\left(x_{k}\right)=
+  \left[\begin{array}{c}
+  x_{k} \\
+  g_{\theta}\left(x_{k}\right)
+  \end{array}\right]
+\end{equation}
+其中$z_k$是升维系统（这里也叫嵌入空间）状态，
+$g_\theta : \mathbb{R}^n \mapsto \mathbb{d}$是参数神经网络。
+这种设计的优点是可以通过以下方式轻松恢复原始状态：
+\begin{equation}
+  x_k = C z_k
+\end{equation}
+其中，矩阵$C \in \mathbb{R}^{n \times (n + d)}$的一个样板如下：
+\begin{equation}
+  C = \left[ I_n \quad 0 \right]
+\end{equation}
+这样，我们就可以保留成本函数的形式进行进一步的控制。
 
+对于嵌入函数的第二部分，在深度Koopman算子理论中，
+有三个版本来表示$g_u(x_k, u_k)$。
 
+第一个版本被称为深度KoopmanU（Deep KoopmanU with Control, DKUC）算法。
+其将函数简化为$g_u(x_k, u_k) = u_k$，
+然后演化方程退化为$g_x(x_{k + 1}) = K_{x x} g_x(x_k) + K_{xu} u_k$。
 
+第二个版本被称为深度Koopman仿射
+（Deep Koopman Affine with Control, DKAC）算法，
+它将进化函数视为控制仿射形式，
+使得$g_u(x_k, u_k) = g_u(x_k)u$，
+并且将等式 (\ref{Linear_Predictor_K}) 修改为：
+\begin{equation}
+  z_{k + 1} = K_{x x} z_k + K_{x u} g_u(x_k) u
+\end{equation}
 
+对于最终版本，使用控制网络$\phi$将函数$g_u(x_k, u_k)$直接近似为
+$g_u(x_k, u_k)=g_{\phi}(x_k, u_k)$，
+并且演化函数保持与等式 (\ref{Linear_Predictor_K}) 相同的形式。
+它被称为深度Koopman非线性（Deep Koopman Nonlinear, DKN）算法。
 
+给定当前状态$x_t$，我们可以很容易地通过前馈网络预测未来的$K$步状态。
+除了嵌入函数外，我们还通过一层线性网络将Koopman
+算子矩阵$K_{x x}$和$K_{x u}$参数化，即令$K_{x x}, K_{x u} = B$。
+然后K步预测如下：
 
+\begin{equation}
+  \begin{array}{c}
+    z_{t+k+1}=A z_{t+k}+B g_{\phi}\left(x_{t+k}, u_{t+k}\right), k=0, \ldots, K-1 \\
+    z_{t}=g_{x}\left(x_{t}\right)=\left[\begin{array}{c}
+    x_{t} \\
+    g_{\theta}\left(x_{t}\right)
+    \end{array}\right] \\
+    x_{t+k}=C z_{t+k}
+  \end{array}
+  \label{K-steps}
+\end{equation}
+其中，对于DKUC算法，$g_\phi(x, u)=u$，
+对于DKAC算法，$g_\phi(x, u)=g_\phi(x)u$，
+对于DKN算法，$g_\phi(x, u)= g_\phi(x, u)$。
 
+Koopman的标准算法应首先选择嵌入函数，然后使用线性回归学习Koopman算子矩阵，这种方法仅用于单步预测。
+在这项工作中，我们端到端地学习嵌入函数和Koopman算子，并设计了用于长期预测的K步预测损失函数。
+给定数据集
+$[ X_i \in \mathbb{R}^{N \times n}, U_i \in \mathbb{R}^{N \times m}, i = 0, 1, 2, \cdots, K]$
+我们可以计算实际嵌入状态$Z_i = g_x(X)$，
+并通过方程 (\ref{K-steps}) 从初始状态$X_0$预测嵌入空间中的K阶状态$[ \hat{Z}_i, i = 1, 2, \cdots, K]$。
+损失函数计算如下：
+\begin{equation}
+  L(\theta, \phi)=\sum_{i=1}^{K} \gamma^{i-1} 
+  \operatorname{MSE}\left(Z_{i}, \hat{Z}_{i}\right)
+\end{equation}
+其中γ是权重衰减超参数，$\operatorname{MSE}$是均方损失函数(Mean Square Error)。
+K步损失不是只考虑下面的一步预测误差，而是关注K步预测误差的加权和，
+有利于在长时间范围内进行预测。
 
+\section{基于深度Koopman算子网络的非线性系统最大熵强化学习}
+上一节介绍了深度Koopman算子是如何通过网络架构和而在这一节中，
+我们介绍如何将深度Koopman算子和最大熵强化学习结合，
+以求使得我们的最优控制算法得到更好的收敛速度和训练效果。
+
+\subsection{深度Koopman Critic网络}
+在第三章中，介绍了动作加权的Koopman算子，其目的是为了更好的获取
+系统动作的信息，不同的动作量信息，在做单步预测时，
+应当在Koopman算子中体现出来，以求达到更好的预测能力。
+
+在实际的控制中，动作变量可能与系统的多个变量有着联系,
+甚至其中的数学关系不能够用简单的线性关系来描述，
+很明显，简单的加权计算并不能够表述这样的关系。
 
 
 
