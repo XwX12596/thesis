@@ -979,15 +979,10 @@ K步损失不是只考虑下面的一步预测误差，而是关注K步预测误
   z_{t + 1} = A z_t + B \hat{u}_t
 \end{equation}
 可以看出，在这里我们使用了两个Koopman矩阵，并且取两个矩阵的和作为新的升维状态，
-同时考虑了状态信息和动作信息。具体网络架构如图(\ref{DKN_critic})所示。
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/dkn-rotate.pdf}
-  \caption{基于非线性形式辅助网络的深度Koopman价值网络}
-  \label{DKN_critic}
-\end{figure}
+同时考虑了状态信息和动作信息。
+具体网络架构如图(\ref{DKN_critic})所示。
 
-在此基础上，我们考虑如等式中的 (\ref{Koopman-critic}) Koopman-Critic函数，
+在此基础上，我们考虑如等式(\ref{Koopman-critic})中的 Koopman-Critic函数，
 将Koopman算子和嵌入函数结合的函数$K^u \phi(\cdot)$通过上述的神经网络结合，
 将等式 (\ref{Koopman-critic}) 改写为：
 \begin{equation}
@@ -1012,7 +1007,16 @@ $\ref{sac}$ 对参数网络进行迭代。
 
 \Appendix
 
+<<<<<<< HEAD
 这里是我的附录
+=======
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/dkn-rotate.pdf}
+  \caption{基于非线性形式辅助网络的深度Koopman价值网络}
+  \label{DKN_critic}
+\end{figure}
+>>>>>>> a06cd84f9c63449cb5686fad2d1fbdc6c8ad2f64
 
 \Thanks
 
