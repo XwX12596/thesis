@@ -993,6 +993,27 @@ K步损失不是只考虑下面的一步预测误差，而是关注K步预测误
 在上面的修改下，我们依然可以遵从算法 
 $\ref{sac}$ 对参数网络进行迭代。
 
+\section{实验验证}
+在本节中，为测试算法性能，在经典的Lorenz环境中进行测试，
+这是一个标准的正则混沌基准动力学系统，
+由于其连续的特征值谱[cite]，
+通常用于评估基于Koopman的方法。
+连续时间动力学由以下方程组给出：
+\begin{equation}
+  f(x, u)=\left[\begin{array}{c}
+  \sigma\left(x_{1}-x_{0}\right)+u \\
+  \left(\rho-x_{2}\right) x_{0}-x_{1} \\
+  x_{0} x_{1}-\beta x_{2}
+  \end{array}\right]
+\end{equation}
+其中，$\sigma = 10,\ \rho = 28,\ \beta = \frac83$。
+
+我们测试了包括SAC、PPO和LQR在内的三种算法和本章中提出的DSAKC算法作对比，
+
+
+
+
+
 
 %论文后部
 \backmatter
@@ -1009,7 +1030,7 @@ $\ref{sac}$ 对参数网络进行迭代。
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/dkn-rotate.pdf}
+  \includegraphics[width=0.52\textwidth]{figures/dkn-rotate.pdf}
   \caption{基于非线性形式辅助网络的深度Koopman价值网络}
   \label{DKN_critic}
 \end{figure}

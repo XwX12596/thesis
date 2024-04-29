@@ -1,3 +1,4 @@
+\PassOptionsToPackage{quiet}{fontspec}
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{LZUThesis}[2023/05/19 V3.5.0.2023 Thesis for LZUer By yuhldr]
 \LoadClass[12pt, a4paper, UTF8, openany,oneside]{ctexbook}
