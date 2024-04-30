@@ -7,9 +7,9 @@
 
 \begin{document}
 
-\title{{基于Deep Koopman算子网络的}{非线性系统强化学习研究}}
+\title{{基于深度Koopman算子的}{非线性系统强化学习研究}}
 
-\entitle{{Deep Koopman Network Based}{ Reinforcement Learning of Nonlinear System}}
+\entitle{{Deep Koopman Operator Based}{ Reinforcement Learning of Nonlinear System}}
 
 \author{{\CJKfamily{XST} \zihao{3} 许忞欢}}
 \major{电子信息科学与工程}
@@ -1008,7 +1008,14 @@ $\ref{sac}$ 对参数网络进行迭代。
 \end{equation}
 其中，$\sigma = 10,\ \rho = 28,\ \beta = \frac83$。
 
-我们测试了包括SAC、PPO和LQR在内的三种算法和本章中提出的DSAKC算法作对比，
+我们用了包括SAC、PPO和LQR在内的三种算法
+和本章中提出的DSAKC算法作对比。
+首先，我让四种算法在Lorenz环境中探索并优化了
+$50000$步，并记录下每$2000$步的回报，见图
+\begin{equation}
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/}
+\end{equation}
 
 
 
