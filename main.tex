@@ -1006,22 +1006,31 @@ $\ref{sac}$ 对参数网络进行迭代。
   x_{0} x_{1}-\beta x_{2}
   \end{array}\right]
 \end{equation}
-其中，$\sigma = 10,\ \rho = 28,\ \beta = \frac83$。
+其中，$\sigma = 10,\ \rho = 28,\ \beta = 8/3$。
 
 我们用了包括SAC、PPO和LQR在内的三种算法
 和本章中提出的DSAKC算法作对比。
 首先，我让四种算法在Lorenz环境中探索并优化了
-$50000$步，并记录下每$2000$步的回报，见图
-\begin{equation}
-  \centering
-  \includegraphics[width=0.95\textwidth]{figures/}
-\end{equation}
+$50000$步，并记录下每$2000$步的回报，如图\ref{episodic_return}所示。
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=/textwidth]{figures/train_return.png}
-  \caption{回报}
+  \includegraphics[width=0.99\textwidth]{figures/train_return.png}
+  \caption{四种算法在Lorenz系统中每2000步回报曲线图}
+  \label{episodic_return}
 \end{figure}
+
+比较DSAKC算法和SAC算法，
+算法在同一个随机种子的情况下进行训练，
+前4000步随机探索，此后的回报均为策略探索得到，
+我们可以看到DSAKC所得到的回报均在SAC之上，
+也就证明了DSAKC在Lorenz系统的控制上，有着明显的优势。
+
+而对于其他算法，在探索的过程中，并没有表现出持续很好的效果，
+但是在探索的过程中，有一些策略在其回合中得到了较小的回报，
+下面我将用四种算法训练出的策略，在同样的Lorenz系统中，探索50000步，
+并将得到的平均回报绘制成图片。
+
 
 
 
