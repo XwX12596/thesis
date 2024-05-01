@@ -301,5 +301,4 @@ TSWLatexianTemp*
 #*Notes.bib
 
 *.pdf
-.latexrun.db
-.latexrun.db.lock
+*latexrun*
