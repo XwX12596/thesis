@@ -152,29 +152,39 @@
 \subsection{深度强化学习}
 强化学习是一个快速发展的领域，处于机器学习和控制理论的交叉点，
 其中智能体学习在复杂的环境进行交互以实现目标\cite{Brunton_book_2019}。
-深度强化学习[3-9]最近被证明能够在几个具有挑战性的任务中实现人类水平或超人类的表现，
-包括玩视频游戏[10,11]和策略游戏[12-14]。
+深度强化学习 最近被证明能够在几个具有挑战性的
+任务\cite{van_hasselt_deep_2016, sanghi_introduction_2021}中
+实现人类水平或超人类的表现，
+包括玩视频游戏\cite{mnih_human-level_2015, vinyals_grandmaster_2019}和
+策略游戏\cite{silver_mastering_2016, silver_mastering_2017, silver_general_2018}。
 深度强化学习也越来越多地用于科学和工程应用，
-包括用于药物发现[15]、机器人操作[16]、自动驾驶[17]
-和无人机赛车[18]、流体流动控制[19-25]和聚变控制[26]。
+包括用于药物发现\cite{popova_deep_2018}、
+机器人操作\cite{gu_deep_2017}、
+自动驾驶\cite{sallab_deep_2017}
+和无人机竞速\cite{kaufmann_champion-level_2023}、
+流体流动控制\cite{gazzola_reinforcement_2014, colabrese_flow_2017, 
+verma_efficient_2018, novati_controlled_2019, 
+fan_reinforcement_2020}和聚变控制\cite{degrave_magnetic_2022}。
 
 尽管取得了上述进展，深度强化学习解决方案通常需要巨大的计算资源来训练和泛化，
 并且它们通常缺乏在许多应用中至关重要的可解释性。
-许多强化学习策略背后的算法与优化和最优控制理论[2]中的
+许多强化学习策略背后的算法与优化和最优控制理论\cite{Brunton_book_2019}中的
 贝尔曼方程（Bellman Equation）及其连续形式
 汉密尔顿-雅可比-贝尔曼（Hamilton-Jacob-Bellman）方程密切相关。
 然而，求解这些方程对于高维非线性系统来说变得棘手，这通常可以使用深度学习来缓解。
-在[cite]的工作中，通过Koopman算子[27-33]的新应用改写贝尔曼方程，
+在\cite{karl}的工作中，通过Koopman算子的新应用改写贝尔曼方程，
 在无限维函数空间上将非线性动态系统重塑为线性方程组。
 
 \subsection{Koopman算子理论}
-Koopman算子在缓解未知动力学下非线性控制的这种困难方面表现出巨大的潜力。
+Koopman算子\cite{koopman_hamiltonian_1931, 
+koopman_dynamical_1932, mezic_comparison_2004}
+在缓解未知动力学下非线性控制的这种困难方面表现出巨大的潜力。
 作为一种数据驱动的方法，Koopman算子可以用最小二乘法自动学习系统模型。
 此外，Koopman算子可以将非线性动力学映射到嵌入空间中的线性系统。
-并且嵌入式线性系统已准备好通过LQR[4]和MPC[9]等线性方法进行控制。
+并且嵌入式线性系统已准备好通过LQR\cite{bemporad_explicit_2002}和MPC\cite{fernandez-camacho_robust_1995}等线性方法进行控制。
 尽管如此，选择嵌入函数以保持预测质量仍然是一项艰巨的任务。
-最近的方法侧重于用深度神经网络[2]学习嵌入函数，然后应用线性控制方法[13]。
-在[cite]中，我们提出了一个端到端的深度学习框架，
+最近的方法侧重于用深度神经网络\cite{mainuddin_detecting_2023}学习嵌入函数，然后应用线性控制方法\cite{han_deep_2020}。
+在\cite{dkn}中，提出了一个端到端的深度学习框架，
 将Koopman嵌入函数和Koopman算子一起学习，缓解了上述困难。
 
 \section{本文主要工作}
@@ -205,7 +215,7 @@ Koopman算子在缓解未知动力学下非线性控制的这种困难方面表�
 
 \section{Koopman算子理论}
 系统的强非线性是数据驱动建模和控制领域的核心问题之一，包括基于现代强化学习框架所做的工作。
-Koopman算子理论[cite]为上述问题提出了一种解决方案。
+Koopman算子理论\cite{}为上述问题提出了一种解决方案。
 在该理论中，非线性系统动力学可以在提升到无限维度希尔伯特空间时变为线性系统，
 并可以通过一组新的基底对于该线性系统进行观测。
 升维工作已被证明对于线性化和简化某些具有挑战性的问题具有显著效果，这与机器学习领域中其他的类似努力相一致。
@@ -401,14 +411,14 @@ $$
 而人工神经网络由人工神经细胞构成，
 以相似的结构组合起来，共同合作以求解决实际问题。
 
-基本的神经网络有三层：
+基本的神经网络有三层\cite{noauthor_-_nodate}：
 \begin{enumerate}
   \item 输入层：数据通过输入层经过处理进入网络；
   \item 隐藏层：从输入层或其他隐藏层获取数据并计算输出；
   \item 输出层：给出最后的结果，一般具有非线性；
 \end{enumerate}
 
-具有上述基本层的网络叫全连接层，下面介绍全连接层：
+具有上述基本层的网络叫全连接层，下面介绍全连接层\cite{noauthor__2024}：
 令输入向量$x \in \mathbb{R}^d$，神经网络的一个层把$x$映射为$x' \in \mathbb{R}^{d'}$。全连接层定义如下：
 \begin{equation}
   x' = \sigma(z), \qquad z = W x + b
@@ -427,7 +437,7 @@ $\sigma(\cdot)$是激活函数，比如softmax函数、sigmoid函数，ReLU（Re
 \subsection{反向传播}
 线性模型和神经网络的训练都可以描述成一个优化问题，
 设全连接层的权重参数为$\omega^{(1)}, \cdots, \omega^{(l)}$
-我们希望求解下面这样的一个优化问题：
+我们希望求解下面这样的一个优化问题\cite{noauthor__2024}：
 \begin{equation}
   \min_{\omega^{(1)}, \cdots, \omega^{(l)}} L(\omega^{(1)}, \cdots, \omega^{(l)})
 \end{equation}
@@ -504,7 +514,7 @@ $\sigma(\cdot)$是激活函数，比如softmax函数、sigmoid函数，ReLU（Re
 \subsection{数据驱动的Koopman算子}
 下面介绍两种获取数据驱动的Koopman算子的方式。
 \subsubsection{动态模态分解}
-动态模态分解 (Dynamic Mode Decomposition, DMD) 是一种基于数据的模型约简技术，用于从系统观测数据中提取动力学模式。给定系统的观测数据序列 ${x_0, x_1, \dots, x_N}$，DMD 可以分解系统的状态演化矩阵 $A$，并提取系统的动态模态。具体步骤如下：
+动态模态分解\cite{schmid_dynamic_2010} (Dynamic Mode Decomposition, DMD) 是一种基于数据的模型约简技术，用于从系统观测数据中提取动力学模式。给定系统的观测数据序列 ${x_0, x_1, \dots, x_N}$，DMD 可以分解系统的状态演化矩阵 $A$，并提取系统的动态模态。具体步骤如下：
 构建数据矩阵 $X$ 和下一时刻数据矩阵 $X'$。
 对数据矩阵 $X$ 和 $X'$ 进行奇异值分解 (SVD)，得到矩阵 $U, \Sigma, V$。
 估计系统状态演化矩阵 $A$。
@@ -512,7 +522,7 @@ $\sigma(\cdot)$是激活函数，比如softmax函数、sigmoid函数，ReLU（Re
 DMD 可以用于系统预测、模型约简和特征提取等应用，在流体力学、结构动力学和气象学等领域得到广泛应用。
 
 \subsubsection{扩展动态模态分解}
-扩展动态模态分解 (Extended Dynamic Mode Decomposition, EDMD) 是 DMD 的一种扩展形式，用于处理非线性系统的观测数据。与传统的DMD相比，EDMD引入了非线性特征映射，以便处理非线性系统的演化。具体步骤如下：
+扩展动态模态分解\cite{williams_data-driven_2015} (Extended Dynamic Mode Decomposition, EDMD) 是 DMD 的一种扩展形式，用于处理非线性系统的观测数据。与传统的DMD相比，EDMD引入了非线性特征映射，以便处理非线性系统的演化。具体步骤如下：
 构建非线性特征映射，将观测数据映射到高维特征空间。
 在高维特征空间中构建数据矩阵 $X$ 和下一时刻数据矩阵 $X'$。
 对数据矩阵 $X$ 和 $X'$ 进行奇异值分解 (SVD)，得到矩阵 $U, \Sigma, V$。
@@ -529,7 +539,7 @@ EDMD 通过引入非线性特征映射，可以更好地处理非线性系统的
 使得$K^u \phi(x) = \phi(\dot x)$。
 
 给定轨迹数据和状态字典空间$\phi$，为每个动作$u \in \mathcal{U}$构建如上的Koopman矩阵$K^u$。
-为此，采取类似于SINDYc[cite]中描述的方法，其中状态和动作的字典空间用于预测下一个状态，
+为此，采取类似于SINDYc\cite{brunton_sparse_2016}中描述的方法，其中状态和动作的字典空间用于预测下一个状态，
 即$\Theta(x, u) \mapsto \dot x$
 而这里的方法不同的地方有两点。
 首先，不是试图预测下一个状态$x$，而是试图预测下一个字典函数值$\phi(x)$。
@@ -609,7 +619,7 @@ EDMD 通过引入非线性特征映射，可以更好地处理非线性系统的
   H(P) = \mathop{\mathbb{E}}_{x \sim P} \left[ - \log P(x) \right]
 \end{equation*}
 在熵正则强化学习中，代理在每个时间步获得与该时间步的策略熵成比例的奖金。
-由此，目标策略变为：
+由此，目标策略\cite{haarnoja_reinforcement_2017}变为：
 \begin{equation}
   \pi^* = \arg \max_{\pi} \mathop{\mathbb{E}}_{\tau\sim\pi} 
   \left[ \sum_{t = 0}^{\infty} \gamma^t \left( r(s_t, a_t, s_{t + 1}) 
@@ -649,7 +659,7 @@ $Q^\pi$更改为包括除了第一个时间步以外的每个时间步的熵奖�
 权重参数$\alpha$决定了熵项对于奖励的相对重要性，从而控制了最优策略迭代中的的随机性。
 
 \subsection{Soft Actor-Critic强化学习最优控制算法}
-下面，介绍如何通过策略迭代公式设计SAC算法，
+下面，介绍如何通过策略迭代公式设计SAC算法\cite{haarnoja_soft_2018}，
 我们将从推导熵策略迭代（Soft Policy Iteration）开始，
 这是一种在应用了熵正则的方法下学习最优策略的通用算法，
 在最大熵框架中交替进行策略评估和策略改进。
@@ -665,7 +675,7 @@ $\mathcal{Q} : \mathcal{S} \times \mathcal{A} \mapsto \mathbb{R}$
 \end{equation}
 
 在策略改进步骤中，策略将逼近于新的熵动作价值函数的指数。
-如下的这种特定的设定可以保证策略的改进[cite]：
+如下的这种特定的设定可以保证策略的改进\cite{haarnoja_soft_2018, sharma_introduction_1998}：
 \begin{equation}
   \pi_{new} = \arg \min_{\pi^\prime \in \Pi} \mathrm{D}_{KL} 
   \left( \pi^\prime(\cdot | s_t) \bigg\Arrowvert
@@ -859,8 +869,6 @@ Actor据此计算要在环境中执行的动作。整体的框架如图 \ref{fig
 可以期望其得到更精准的预测。
 同时，将其与Koopman辅助的强化学习结合，得益于更加精确的价值函数估计，
 可以使得最大熵强化学习效果更好，训练更快。
-此外，本章中还提出一种Koopman算子和强化学习交替训练的训练架构，更好的发挥神经网络的优势
-使得训练流程更加简化，对于样本的利用更加有效。
 
 \section{深度Koopman算子}
 \subsection{深度嵌入函数}
@@ -1018,7 +1026,7 @@ $\ref{sac}$ 对参数网络进行迭代。
 \subsection{实验验证}
 在本节中，为测试算法性能，在经典的Lorenz环境中进行测试，
 这是一个标准的正则混沌基准动力学系统，
-由于其连续的特征值谱[cite]，
+由于其连续的特征值谱\cite{brunton_chaos_2017}，
 通常用于评估基于Koopman的方法。
 连续时间动力学由以下方程组给出：
 \begin{equation}
@@ -1030,8 +1038,9 @@ $\ref{sac}$ 对参数网络进行迭代。
 \end{equation}
 其中，$\sigma = 10,\ \rho = 28,\ \beta = 8/3$。
 
-我们用了包括SAC、PPO和LQR在内的三种算法
+文中用了包括SAC、PPO和LQR在内的三种算法
 和本章中提出的DSAKC算法作对比。
+代码基于CleanRL\cite{huang2022cleanrl}进行改进，实现上述算法在Lorenz环境下的学习。
 首先，我让四种算法在Lorenz环境中探索并优化了
 $50000$步，并记录下每$2000$步的回报，如图\ref{episodic_return}所示。
 
@@ -1047,8 +1056,9 @@ $50000$步，并记录下每$2000$步的回报，如图\ref{episodic_return}所�
 前4000步随机探索，此后的回报均为策略探索得到，
 % 我们可以看到DSAKC所得到的回报均在SAC之上，
 我们可以看到对于SAC而言DSAKC在Lorenz系统的控制上，有着明显的优势。
+\newpage
 
-\begin{table}[H]
+\begin{table}[h]
   \centering
   \begin{tabular}{ccccc}
     \toprule

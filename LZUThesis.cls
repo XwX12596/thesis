@@ -69,6 +69,7 @@
 \RequirePackage{subfig}
 % 修复上面的冲突
 \RequirePackage[titles,subfigure]{tocloft}
+\usepackage{cite}
 
 
 %============================ 我自己用的一些小命令 =========%
