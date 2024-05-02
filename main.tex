@@ -83,11 +83,11 @@
 
 
 %中文摘要
-\ZhAbstract{这是测试的参考文献。}
+\ZhAbstract{摘要}
 {Koopman算子理论，深度神经网络，强化学习}
 
 %英文摘要
-\EnAbstract{My Abstract}
+\EnAbstract{Abstract}
 {Koopman Operator Theory, Deep Neural Network, Reinforcement Learning}
 
 %生成目录
@@ -215,7 +215,7 @@ koopman_dynamical_1932, mezic_comparison_2004}
 
 \section{Koopman算子理论}
 系统的强非线性是数据驱动建模和控制领域的核心问题之一，包括基于现代强化学习框架所做的工作。
-Koopman算子理论\cite{}为上述问题提出了一种解决方案。
+Koopman算子理论\cite{koopman_dynamical_1932}为上述问题提出了一种解决方案。
 在该理论中，非线性系统动力学可以在提升到无限维度希尔伯特空间时变为线性系统，
 并可以通过一组新的基底对于该线性系统进行观测。
 升维工作已被证明对于线性化和简化某些具有挑战性的问题具有显著效果，这与机器学习领域中其他的类似努力相一致。
@@ -278,7 +278,7 @@ Koopman算子将测量函数$g$沿着路径$x$向前演化如下：
 因此不难发现，我们可以应用Koopman算子理论研究，将对于非线性系统的研究，通过观测空间状态线性演化实现。
 
 同时，由于难以捕捉无限维希尔伯特空间中所有可观测函数的演化，所以应该试图识别随着非线性系统动力学而线性演化的关键观测函数，
-Koopman算子的本征函数就可以作为一组特殊的观测函数[cite]：
+Koopman算子的本征函数就可以作为一组特殊的观测函数：
 \begin{equation}
   \mathcal{K} \Phi (x_k) = \lambda \Phi(x_k) = \Phi(x_{k + 1})
 \end{equation}
@@ -305,7 +305,7 @@ Koopman算子的本征函数就可以作为一组特殊的观测函数[cite]：
 我们可以将等式 (\ref{Linear_Predictor_K}) 修改为：
 \begin{equation}
   g(x_{k + 1}, u_{k + 1}) = \mathcal{K} g(x_k, u_k)
-  \label{Linear_Predictor_with_Control}
+  % \label{Linear_Predictor_with_Control}
 \end{equation}
 其中$x \in \mathbb{R}^n, u \in \mathbb{R}^m$，
 且$g : \mathbb{R}^{n + m} \mapsto \mathbb{R}^d$。
@@ -650,7 +650,7 @@ $Q^\pi$更改为包括除了第一个时间步以外的每个时间步的熵奖�
 \end{equation}
 
 标准的强化学习最大化奖励之和的期望，但是在加入熵正则方法的强化学习中，
-将会考虑一个更加一般的最大熵目标[cite]：
+将会考虑一个更加一般的最大熵目标：
 \begin{equation}
   J(\pi) = \sum_{t = 0}^T \mathop{\mathbb{E}} \left[ r(s_t, a_t) 
   + \alpha \mathcal{H}(\pi(\cdot | s_t)) \right]
@@ -728,7 +728,7 @@ $\mathcal{Q} : \mathcal{S} \times \mathcal{A} \mapsto \mathbb{R}$
 \end{equation}
 更新利用了目标值网络$V_{\overline{\psi}}$，其中$\overline{\psi}$
 在更新参数时加权更新，
-这种方式已可以被证明稳定训练[cite]。
+这种方式已可以被证明稳定训练。
 最后，可以通过直接最小化等式(\ref{pi_upd})
 中的KL散度（Kullback-Leibler Divergence）来学习策略参数：
 \begin{equation}
@@ -790,7 +790,7 @@ $\mathcal{Q} : \mathcal{S} \times \mathcal{A} \mapsto \mathbb{R}$
   \label{fig_sakc}
 \end{figure}
 
-下面，介绍如何通过修改Soft Actor-Critic框架[cite]，
+下面，介绍如何通过修改Soft Actor-Critic框架\cite{haarnoja_soft_2018}，
 以合并来自Koopman算子的信息来限制探索空间的。
 
 这里使用与Soft Actor-Critic论文[53]相同的损失函数和类似的符号，
@@ -1126,9 +1126,8 @@ $50000$步，并记录下每$2000$步的回报，如图\ref{episodic_return}所�
 %=======%
 %引入参考文献文件
 %=======%
-\bibdatabase{bib/database}%bib文件名称 仅修改bib/ 后部分
-\addbibresource{bib/database.bib}
 \printbib
+\bibliography{bib/database}
 % \nocite{*} %显示数据库中有的，但是正文没有引用的文献
 
 \Appendix

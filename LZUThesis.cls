@@ -744,7 +744,6 @@
     \cleardoublepage
     \phantomsection
     \addcontentsline{toc}{chapter}{参考文献}
-    \bibliography{\the \bibdatabase}
 }
 
 
