@@ -83,11 +83,30 @@
 
 
 %中文摘要
-\ZhAbstract{摘要}
+\ZhAbstract{在这篇文章中，我们探索了如何通过改进强化学习框架来更好地控制非线性系统。
+首先，引入了熵正则策略优化，以加强策略的探索，平衡数据的探索和利用，以避免过早收敛的问题，并最大化回报。
+然后，为了解决非线性系统复杂动力学的挑战，引入了Koopman算子理论，并强调了如何通过数据驱动的方式得到Koopman算子及其观测函数，
+利用Koopman嵌入函数将系统动力学嵌入到更高维的线性空间中，从而实现线性地推进系统动力学。
+最后，分两步提出了深度Koopman算子辅助的最大熵强化学习算法，具体通过改写贝尔曼方程并将价值估计提升到嵌入空间，
+实现了在高维线性空间上线性推进价值函数，从而提升了训练效果。
+实验证明，在具有连续谱的非线性Lorenz系统中，我们的算法在50000步的训练和探索中表现优于普通的深度强化学习和线性控制算法。}
 {Koopman算子理论，深度神经网络，强化学习}
 
 %英文摘要
-\EnAbstract{Abstract}
+\EnAbstract{
+  In this article, we explore how to more precisely control nonlinear systems by improving the reinforcement learning framework.
+First, entropy regular policy optimization is added to enhance the exploration of strategies, balance the exploration and 
+utilization of data to avoid premature convergence problems, finally maximize returns. 
+Then, in order to solve the challenges of complex dynamics of nonlinear systems,
+the Koopman operator theory is introduced, and this paper emphasizes how to
+obtain the Koopman operator and its observation function in a data-driven manner.
+Using Koopman embedding function to embed system dynamics into higher dimensional linear space, so as to achieve linear propulsion of system dynamics.
+Finally, a deep Koopman operator-assisted maximum entropy reinforcement learning algorithm is proposed in two steps.
+Specifically, by rewriting the Bellman equation and lifting the value estimate to the embedding space,
+the value function is achieved linearly in the high-dimensional linear space, thus improving the training effect.
+Experiments show that in a nonlinear Lorenz system with continuous spectrum,
+our algorithm outperforms ordinary deep reinforcement learning and linear control algorithms in training and exploration at 50,000 steps.
+}
 {Koopman Operator Theory, Deep Neural Network, Reinforcement Learning}
 
 %生成目录
