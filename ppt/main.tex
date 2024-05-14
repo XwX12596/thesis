@@ -3,7 +3,7 @@
 
 %------------------------------------------------------------
 %首页start
-\title{毕业论文开题报告}
+\title{本科毕业论文结项答辩}
 
 \subtitle{基于Deep Koopman算子网络的非线性系统强化学习研究}
 % \subtitle{基于Koopman理论的非线性系统强化学习研究}
@@ -35,18 +35,19 @@
 
 \section{研究背景}
 
-\begin{frame}{非线性系统控制}
-  \begin{center}
-    \zihao{3} {主要难点所在}
-  \end{center}
-  \begin{enumerate}
-    \item 系统建模、系统动态
-    \item 全局线性化
-    \item 控制器设计、调参
-    \item 适应系统变化
-  \end{enumerate}	
-\end{frame}
-\note{一般来说，对于线性系统的控制，是比较好实现的，可以应用的方法也很多。但是在非线性系统中，控制就会变得困难。首先，与线性系统不一样的是，它的系统动态难以预测，不利于控制。广泛采用的研究方法是：在研究系统局部动态时，采用局部线性化的方式，使用线性系统控制手段在小范围内研究，而不是采用全局线性化；此外，控制器的设计，参数的调整都需要耗费时间和精力。最后，对于可能会因为自身的随机性而产生变化的系统而言，如何使得设计好的控制器，有能力适应新的环境也同样构成问题。应对上述困难，我设想在使用强化学习训练控制器的同时，引入koopman算子理论和深度Koopman网络缓解强非线性带来的影响。}
+% \begin{frame}{非线性系统控制}
+%   \begin{center}
+%     \zihao{3} {主要难点所在}
+%   \end{center}
+%   \begin{enumerate}
+%     \item 系统建模、系统动态
+%     \item 全局线性化
+%     \item 控制器设计、调参
+%     \item 适应系统变化
+%   \end{enumerate}	
+% \end{frame}
+% \note{一般来说，对于线性系统的控制，是比较好实现的，可以应用的方法也很多。但是在非线性系统中，控制就会变得困难。首先，与线性系统不一样的是，它的系统动态难以预测，不利于控制。广泛采用的研究方法是：在研究系统局部动态时，采用局部线性化的方式，使用线性系统控制手段在小范围内研究，而不是采用全局线性化；此外，控制器的设计，参数的调整都需要耗费时间和精力。最后，对于可能会因为自身的随机性而产生变化的系统而言，如何使得设计好的控制器，有能力适应新的环境也同样构成问题。应对上述困难，我设想在使用强化学习训练控制器的同时，引入koopman算子理论和深度Koopman网络缓解强非线性带来的影响。}
+
 
 \begin{frame}{强化学习控制理论}
   \begin{figure}
@@ -115,35 +116,49 @@
 %   \end{itemize}
 % \end{frame}
 
-\begin{frame}{强化学习中的Koopman算子}
-  \begin{figure}
-    \includegraphics[width=0.9\textwidth]{sakc.png}
-    \caption{强化学习中的Koopman算子\footfullcite{rozwood2023koopman}}
-  \end{figure}
-  Koopman-Critic接收状态和奖励，将这些信息提升到高维线性空间，
-  以Koopman算子线性推进系统动态。
-\end{frame}
-
 \begin{frame}{深度Koopman算子}
-  \begin{columns}
-    \column{0.6\textwidth}
-    \begin{figure}
-      \includegraphics[width=\textwidth]{dkn.png}
-      \caption{深度Koopman算子\footfullcite{shi2022deep}}
-    \end{figure}
-    \column{0.4\textwidth}
-    以神经网络接管观测函数和Koopman算子
-    （图中分别对应Embedding Net 和 Koopman A/B Net）
-  \end{columns}
+  \begin{figure}
+    \includegraphics[width=0.8\textwidth]{dkn.pdf}
+    % \caption{深度Koopman算子\footfullcite{shi2022deep}}
+    \caption{深度Koopman算子}
+  \end{figure}
+  通过引入合适的损失函数（K-step），训练深度Koopman算子，根据升维后的状态和奖励计算当前时刻
+  价值。控制网络的加入，能够有效抑制非线性控制变量在线性估计中产生的畸变。
+\end{frame}
+
+\begin{frame}{强化学习中的深度Koopman算子}
+  \begin{figure}
+    \includegraphics[width=0.9\textwidth]{sakc.pdf}
+    % \caption{强化学习中的Koopman算子\footfullcite{rozwood2023koopman}}
+    \caption{深度Koopman算子非线性系统最大熵强化学习}
+  \end{figure}
+  Deep Koopman接收系统状态，提升到高维线性空间，更精确地为critic提供
+  线性系统动态，由此认为，深度Koopman算子能够为流行的Soft Actor-Critic算法
+  带来更好的性能。
 \end{frame}
 
 
-\begin{frame}{价值和意义}
-    \begin{itemize}
-        \item 一种新的控制方法
-        \item 面对强非线性具备可解释性
-        \item 调试方便、部署难度低
-    \end{itemize}
+
+\begin{frame}{实验验证}
+  \begin{columns}
+    \column{0.5\textwidth}
+    为测试算法性能,在经典的 Lorenz 环境中进行测试,
+    由于其连续的特征值谱，
+    通常用于评估基于 Koopman 的方法:
+    \column{0.5\textwidth}
+    \begin{equation*}
+      f(x, u)=\left[\begin{array}{c}
+      \sigma\left(x_{1}-x_{0}\right)+u \\
+      \left(\rho-x_{2}\right) x_{0}-x_{1} \\
+      x_{0} x_{1}-\beta x_{2}
+      \end{array}\right]
+    \end{equation*}
+  \end{columns}
+
+\begin{figure}
+  \includegraphics[width=0.75\textwidth]{train_return.png}
+\end{figure}
+
 \end{frame}
 \note{
   我的研究内容主要由两部分组成：
@@ -155,30 +170,28 @@
   而不是使用单位反馈的方式输入到koopman算子中，使得系统的状态非线性和动作非线性都得到了考虑，从而增加了系统信息的完整性。
 }
 
-\section{研究计划}
+\section{总结展望}
 
-\begin{frame}{现有进度与规划}
+\begin{frame}{总结与展望}
   \begin{center}
     \Large
-    目前进度
+    工作总结
     \normalsize
   \end{center}
   \begin{itemize}
-    \item 数据驱动的Koopman算子，如DMD，EDMD等算法；
-    \item Soft Actor-Critic 算法及其代码实现。
+    \item 使用深度Koopman架构改进最大熵强化学习 SAC 算法。
+    \item 使用我们的算法和其他流行算法在Lorenz系统上训练，证明了所提出算法的性能。
   \end{itemize}  
 
   \begin{center}
     \Large
-    未来工作
+    未来展望
     \normalsize
   \end{center}
   \begin{itemize}
-    \item 挑选合适的gym环境训练出Deep Koopman Network；
-    \item 将DKN嵌入 Actor-Critic 类算法，训练合适的策略；
-    \item 实验验证，并改进控制器构架；
-    \item 借助ROS，尝试在机械臂上使用本算法进行控制。
-  \end{itemize}  
+    \item 深度 Koopman 算子共用经验回放,解决数据浪费的问题;实现在线训练可能。
+    \item 寻求与机械臂结合,发挥应对非线性系统优势,实现控制任务。
+  \end{itemize}
 \end{frame}
 \note{}
 
