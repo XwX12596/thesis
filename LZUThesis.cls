@@ -480,6 +480,7 @@
 \newtoks \supervisorcomment
 \newtoks \recommendedgrade
 \newtoks \supervisorsignature
+\newtoks \committeesignature
 \newtoks \committeecomment
 \newtoks \finalgrade
 \newcommand{\Grade}{
@@ -501,7 +502,7 @@
                     \setlength\parindent{\ccwd}
                     \zihao{4}  \the \supervisorcomment
                 \end{minipage}}                                                         \\
-            \zihao{4}\bfseries{建议成绩}\LZUunderline[80pt]{\the \recommendedgrade}
+            \zihao{4}\bfseries{建议成绩}\LZUunderline[80pt]{\the \finalgrade}
             \hfill
             \bfseries{指导教师（签字）}\LZUunderline[80pt]{
                 \the \supervisorsignature
@@ -514,7 +515,10 @@
                     \zihao{4} \the\committeecomment
                 \end{minipage}
             }
-            \hfill \bfseries{答辩委员会负责人（签字）}\underline{\hspace{80pt}}                                             \\
+            % \hfill \bfseries{答辩委员会负责人（签字）}\underline{\hspace{80pt}}                                             \\
+            \hfill \bfseries{答辩委员会负责人（签字）}\LZUunderline[80pt]{
+                \the \committeesignature
+            }               \\              
             \hline
             \\[2.3cm]
             \bfseries{成绩}\LZUunderline[80pt]{\the \finalgrade}\hfill \bfseries{学院（盖章）}\underline{\hspace{80pt}} \\
